@@ -133,10 +133,13 @@ def rand_cutout(image, size, center_bias=False, center_focus=2):
 # load clip
 
 perceptor, normalize_image = None, None
+perceptor_input_resolution = 224
 def load_clip(model_name = 'ViT-B/32', jit = False):
     global perceptor
     global normalize_image
+    global perceptor_input_resolution
     perceptor, normalize_image = load('ViT-B/32', jit = False)
+    perceptor_input_resolution = perceptor.input_resolution.item()
 
 # load biggan
 
@@ -253,9 +256,9 @@ class BigSleep(nn.Module):
             # get cutout
             apper = rand_cutout(out, size, center_bias=self.center_bias)
             if (self.experimental_resample):
-                apper = resample(apper, (224, 224))
+                apper = resample(apper, (perceptor_input_resolution, perceptor_input_resolution))
             else:
-                apper = F.interpolate(apper, (224, 224), **self.interpolation_settings)
+                apper = F.interpolate(apper, (perceptor_input_resolution, perceptor_input_resolution), **self.interpolation_settings)
             pieces.append(apper)
 
         into = torch.cat(pieces)
@@ -374,7 +377,7 @@ class Imagine(nn.Module):
             "min": []
         }
         # create img transform
-        self.clip_transform = create_clip_img_transform(224)
+        self.clip_transform = create_clip_img_transform(perceptor_input_resolution)
         # create starting encoding
         self.set_clip_encoding(text=text, img=img, encoding=encoding, text_min=text_min)
     
