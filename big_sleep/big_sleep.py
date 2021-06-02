@@ -132,7 +132,11 @@ def rand_cutout(image, size, center_bias=False, center_focus=2):
 
 # load clip
 
-perceptor, normalize_image = load('ViT-B/32', jit = False)
+perceptor, normalize_image = None, None
+def load_clip(model_name = 'ViT-B/32', jit = False):
+    global perceptor
+    global normalize_image
+    perceptor, normalize_image = load('ViT-B/32', jit = False)
 
 # load biggan
 
