@@ -206,7 +206,7 @@ class BigSleep(nn.Module):
         num_cutouts = 128,
         loss_coef = 100,
         image_size = 512,
-        bilinear = False,
+        interpolation = 'nearest',
         max_classes = None,
         class_temperature = 2.,
         experimental_resample = False,
@@ -220,7 +220,7 @@ class BigSleep(nn.Module):
         self.experimental_resample = experimental_resample
         self.center_bias = center_bias
 
-        self.interpolation_settings = {'mode': 'bilinear', 'align_corners': False} if bilinear else {'mode': 'nearest'}
+        self.interpolation_settings = {'mode': interpolation, 'align_corners': False} if interpolation != 'nearest' else {'mode': 'nearest'}
 
         self.model = Model(
             image_size = image_size,
@@ -309,7 +309,7 @@ class Imagine(nn.Module):
         epochs = 20,
         iterations = 1050,
         save_progress = False,
-        bilinear = False,
+        interpolation = 'nearest',
         open_folder = True,
         seed = None,
         append_seed = False,
@@ -324,9 +324,11 @@ class Imagine(nn.Module):
         center_bias = False,
     ):
         super().__init__()
+        
+        assert interpolation in ['nearest','linear','bilinear','bicubic','trilinear','area'], 'interpolation must be one of nearest,linear,bilinear,bicubic,trilinear,area'
 
         if torch_deterministic:
-            assert not bilinear, 'the deterministic (seeded) operation does not work with interpolation (PyTorch 1.7.1)'
+            #assert not bilinear, 'the deterministic (seeded) operation does not work with interpolation (PyTorch 1.7.1)'
             torch.set_deterministic(True)
 
         self.seed = seed
@@ -343,7 +345,7 @@ class Imagine(nn.Module):
 
         model = BigSleep(
             image_size = image_size,
-            bilinear = bilinear,
+            interpolation = interpolation,
             max_classes = max_classes,
             class_temperature = class_temperature,
             experimental_resample = experimental_resample,
