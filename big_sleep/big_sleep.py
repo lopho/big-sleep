@@ -139,7 +139,10 @@ def load_clip(model_name = 'ViT-B/32', jit = False):
     global normalize_image
     global perceptor_input_resolution
     perceptor, normalize_image = load('ViT-B/32', jit = False)
-    perceptor_input_resolution = perceptor.input_resolution.item()
+    if model_name == 'RES50x4':
+        perceptor_input_resolution = 288
+    else:
+        perceptor_input_resolution = 244
 
 # load biggan
 
