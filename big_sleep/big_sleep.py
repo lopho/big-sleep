@@ -226,7 +226,7 @@ class BigSleep(nn.Module):
         self.experimental_resample = experimental_resample
         self.center_bias = center_bias
 
-        self.interpolation_settings = {'mode': interpolation, 'align_corners': False} if interpolation != 'nearest' else {'mode': 'nearest'}
+        self.interpolation_settings = {'mode': interpolation}#, 'align_corners': False}# if interpolation != 'nearest' else {'mode': 'nearest'}
 
         self.model = Model(
             image_size = image_size,
